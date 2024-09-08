@@ -1,0 +1,201 @@
+### Test GET /api/products - Successful retrieval of all products
+GET http://localhost:8081/api/products
+Accept: application/json
+
+###
+
+### Test POST /api/purchase - Successful purchase
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 2
+  }
+
+]
+
+###
+
+### Test POST /api/purchase - Missing user ID header
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+
+[
+  {
+    "name": "ProductA",
+    "quantity": 2
+  }
+]
+
+###
+
+### Test POST /api/purchase - Invalid product list (negative quantity)
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "ProductA",
+    "quantity": -1
+  }
+]
+
+###
+
+### Test POST /api/purchase - Product not found
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "NonExistentProduct",
+    "quantity": 1
+  }
+]
+
+###
+
+### Test GET /api/purchases - Successful retrieval of purchases
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+Accept: application/json
+
+###
+
+### Test GET /api/purchases - Missing user ID header
+GET http://localhost:8081/api/purchases
+Accept: application/json
+
+###
+
+### Test GET /api/purchases - Customer not found
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174999
+Accept: application/json
+
+### Test POST /api/purchase - User 2 purchases 5 exercises - failure
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174002
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 15
+  }
+]
+
+###
+
+### Test POST /api/purchase - User 2 purchases 1 unknown product - failure
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174002
+
+[
+  {
+    "name": "UnknownProduct",
+    "quantity": 1
+  }
+]
+
+###
+
+### Test GET /api/purchases - Checking User 1 purchases
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174001
+Accept: application/json
+
+###
+
+### Test GET /api/purchases - Checking User 2 purchases
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174002
+Accept: application/json
+
+###
+
+### Test POST /api/purchase - Missing user ID
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 15
+  }
+]
+
+### Test POST /api/purchase - Invalid user ID
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: invalid-uuid
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 15
+  }
+]
+
+### Test POST /api/purchase - Product not found or insufficient quantity
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "nonexistentProduct",
+    "quantity": 1000
+  }
+]
+
+### Test POST /api/purchase - Valid user ID but no products
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[]
+
+### Test POST /api/purchase - Valid user ID but invalid product format
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "invalidField": "value"
+  }
+]
+
+### Test POST /api/purchase - Valid user ID and products
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 1
+  }
+]
+
+### Test GET /api/purchases - Missing user ID
+GET http://localhost:8081/api/purchases
+
+### Test GET /api/purchases - Invalid user ID
+GET http://localhost:8081/api/purchases
+X-user-id: invalid-uuid
+
+### Test GET /api/purchases - Nonexistent user ID
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174001
+
+### Test GET /api/purchases - Valid user ID
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174000

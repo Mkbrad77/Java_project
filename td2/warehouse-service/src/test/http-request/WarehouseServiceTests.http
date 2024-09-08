@@ -1,0 +1,261 @@
+### Get all products in the warehouse
+GET http://localhost:8082/api/products
+Accept: application/json
+
+###
+
+### Get a specific product from the warehouse
+GET http://localhost:8082/api/product/productName
+Accept: application/json
+
+###
+
+### Restock products in the warehouse
+POST http://localhost:8082/api/restock
+Content-Type: application/json
+
+[
+  {
+    "name": "banane",
+    "quantity": 10
+  },
+  {
+    "name": "orange",
+    "quantity": 5
+  }
+]
+
+###
+
+### Get the restocked product to confirm
+GET http://localhost:8082/api/product/product1
+Accept: application/json
+
+###
+
+
+
+
+
+
+
+
+
+
+
+
+
+###
+# @name Get all products
+GET http://localhost:8082/api/products
+Accept: application/json
+
+> {%
+    client.test("Request was successful", function() {
+        client.assert(response.status === 200, "Expected status 200, got " + response.status);
+        //client.assert(response.body.length > 0, "Expected non-empty product list");
+    });
+%}
+
+###
+# @name Get specific product
+GET http://localhost:8082/api/product/testProduct
+Accept: application/json
+
+> {%
+    client.test("Request was successful", function() {
+        client.assert(response.status === 200, "Expected status 200, got " + response.status);
+        client.assert(response.body.name === "testProduct", "Expected product name 'testProduct', got " + response.body.name);
+    });
+%}
+
+###
+# @name Get non-existent product
+GET http://localhost:8082/api/product/nonExistentProduct
+Accept: application/json
+
+> {%
+    client.test("Product not found", function() {
+        client.assert(response.status === 404, "Expected status 404, got " + response.status);
+    });
+%}
+
+###
+# @name Get product with blank name
+GET http://localhost:8082/api/product/
+Accept: application/json
+
+> {%
+    client.test("Invalid field", function() {
+        client.assert(response.status === 400, "Expected status 400, got " + response.status);
+    });
+%}
+
+
+
+###
+# @name Purchase products
+POST http://localhost:8082/api/purchase
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 5
+  }
+]
+
+> {%
+    client.test("Purchase was successful", function() {
+        client.assert(response.status === 200, "Expected status 200, got " + response.status);
+    });
+%}
+
+###
+# @name Purchase products with negative quantity
+POST http://localhost:8082/api/purchase
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "testProduct",
+    "quantity": -5
+  }
+]
+
+> {%
+    client.test("Invalid field", function() {
+        client.assert(response.status === 400, "Expected status 400, got " + response.status);
+    });
+%}
+
+###
+# @name Purchase non-existent product
+POST http://localhost:8082/api/purchase
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "nonExistentProduct",
+    "quantity": 5
+  }
+]
+
+> {%
+    client.test("Product not found", function() {
+        client.assert(response.status === 404, "Expected status 404, got " + response.status);
+    });
+%}
+
+
+###
+# @name Purchase product with insufficient stock
+POST http://localhost:8082/api/purchase
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 1000
+  }
+]
+
+> {%
+    client.test("Not enough stock", function() {
+        client.assert(response.status === 400, "Expected status 400, got " + response.status);
+    });
+%}
+
+
+
+###
+# @name Restock products
+POST http://localhost:8082/api/restock
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 10
+  }
+]
+
+> {%
+    client.test("Restock was successful", function() {
+        client.assert(response.status === 200, "Expected status 200, got " + response.status);
+    });
+%}
+
+###
+# @name Restock products with invalid field
+POST http://localhost:8082/api/restock
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "",
+    "quantity": 10
+  }
+]
+
+> {%
+    client.test("Invalid field", function() {
+        client.assert(response.status === 400, "Expected status 400, got " + response.status);
+    });
+%}
+
+###
+# @name Restock product for purchase workflow
+POST http://localhost:8082/api/restock
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 20
+  }
+]
+
+> {%
+    client.test("Restock was successful", function() {
+        client.assert(response.status === 200, "Expected status 200, got " + response.status);
+    });
+%}
+
+###
+# @name Purchase product in workflow
+POST http://localhost:8082/api/purchase
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 5
+  }
+]
+
+> {%
+    client.test("Purchase was successful", function() {
+        client.assert(response.status === 200, "Expected status 200, got " + response.status);
+    });
+%}
+
+###
+# @name Verify remaining stock
+GET http://localhost:8082/api/product/testProduct
+Accept: application/json
+
+> {%
+    client.test("Verify remaining stock", function() {
+        client.assert(response.status === 200, "Expected status 200, got " + response.status);
+        client.assert(response.body.quantity === 20, "Expected remaining quantity 15, got " + response.body.quantity);
+    });
+%}

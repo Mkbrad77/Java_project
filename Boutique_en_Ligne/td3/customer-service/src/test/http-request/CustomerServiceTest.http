@@ -1,0 +1,435 @@
+
+# @name Restock products
+POST http://localhost:8082/api/restock
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "name": "ananas",
+    "quantity": 78
+  },
+  {
+    "name": "mangue",
+    "quantity": 55
+  },
+  {
+    "name": "pomme",
+    "quantity": 100
+  }
+]
+###
+# @name Test GET /api/products - Successful retrieval of all products
+GET http://localhost:8081/api/products
+Accept: application/json
+
+###
+
+# @name Test POST /api/purchase - Successful purchase
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174009
+
+[
+  {
+    "name": "ananas",
+    "quantity": 3
+  }
+]
+###
+# @name Test GET /api/purchases - Successful retrieval of purchases by user
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174009
+Accept: application/json
+###
+
+
+# @name Test GET /api/purchases/search - Search purchases by user and product
+GET http://localhost:8081/api/purchases/search?user=123e4567-e89b-12d3-a456-426614174009&product=ananas
+Accept: application/json
+###
+
+
+# @name Test GET /api/popularity/products/bycustomers - Successful retrieval of product popularity
+GET http://localhost:8081/api/popularity/products/bycustomers
+Accept: application/json
+###
+
+# @name Test GET /api/popularity/customers/bypurchasesof/{productName} - Successful retrieval of customers by product
+GET http://localhost:8081/api/popularity/customers/bypurchasesof/ananas
+Accept: application/json
+
+
+
+
+
+
+### Test GET /api/popularity/products/bycustomers - Get products ranked by customer popularity
+GET http://localhost:8081/api/popularity/products/bycustomers
+Accept: application/json
+
+###
+
+### Test GET /api/popularity/customers/bypurchasesof/{name} - Get customers ranked by purchases of a specific product
+GET http://localhost:8081/api/popularity/customers/bypurchasesof/ananas
+Accept: application/json
+
+
+
+### Test POST /api/purchase - Successful purchase
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "mangue",
+    "quantity": 2
+  },
+  {
+    "name": "ananas",
+    "quantity": 5
+  }
+]
+
+###
+### Test POST /api/purchase - Successful purchase
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174001
+
+[
+  {
+    "name": "orange",
+    "quantity": 2
+  },
+  {
+    "name": "ananas",
+    "quantity": 3
+  }
+]
+
+### Test POST /api/purchase - Successful purchase
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174002
+
+[
+  {
+    "name": "pomme",
+    "quantity": 10
+  },
+  {
+    "name": "ananas",
+    "quantity": 5
+  }
+]
+### Test POST /api/purchase - Missing user ID header
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+
+[
+  {
+    "name": "ProductA",
+    "quantity": 2
+  }
+]
+
+###
+
+### Test POST /api/purchase - Invalid product list (negative quantity)
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "ProductA",
+    "quantity": -1
+  }
+]
+
+###
+
+### Test POST /api/purchase - Product not found
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "NonExistentProduct",
+    "quantity": 1
+  }
+]
+
+###
+
+
+
+###
+
+### Test GET /api/purchases - Missing user ID header
+GET http://localhost:8081/api/purchases
+Accept: application/json
+
+###
+
+### Test GET /api/purchases - Customer not found
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174999
+Accept: application/json
+
+###
+
+### Test GET /api/purchases - Customer not found
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174999
+Accept: application/json
+
+###
+
+### Test GET /api/purchases/search - Search by user
+GET http://localhost:8081/api/purchases/search?user=123e4567-e89b-12d3-a456-426614174000
+Accept: application/json
+
+###
+
+### Test GET /api/purchases/search - Search by product
+GET http://localhost:8081/api/purchases/search?product=testProduct
+Accept: application/json
+
+###
+
+### Test GET /api/purchases/search - Search by user and product
+GET http://localhost:8081/api/purchases/search?user=123e4567-e89b-12d3-a456-426614174000&product=testProduct
+Accept: application/json
+
+###
+
+### Test GET /api/popularity/products/bycustomers - Get products ranked by customer popularity
+GET http://localhost:8081/api/popularity/products/bycustomers
+Accept: application/json
+
+###
+
+### Test GET /api/popularity/customers/bypurchasesof/{name} - Get customers ranked by purchases of a specific product
+GET http://localhost:8081/api/popularity/customers/bypurchasesof/testProduct
+Accept: application/json
+
+###
+
+### Test POST /api/purchase - User purchases 5 items - failure due to insufficient stock
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174002
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 15
+  }
+]
+
+###
+
+### Test GET /api/product/{name} - Get product by name
+GET http://localhost:8081/api/product/testProduct
+Accept: application/json
+
+###
+
+### Test GET /api/product/{name} - Product not found
+GET http://localhost:8081/api/product/NonExistentProduct
+Accept: application/json
+
+###
+
+### Test POST /api/restock - Restock products
+POST http://localhost:8081/api/restock
+Content-Type: application/json
+
+[
+  {
+    "name": "banane",
+    "quantity": 10
+  },
+  {
+    "name": "orange",
+    "quantity": 10
+  }
+]
+
+###
+
+### Test POST /api/restock - Invalid product list (empty or invalid list)
+POST http://localhost:8081/api/restock
+Content-Type: application/json
+
+[
+  {
+    "name": "",
+    "quantity": 10
+  }
+]
+
+###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Test POST /api/purchase - User 2 purchases 5 exercises - failure
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174002
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 15
+  }
+]
+
+###
+
+### Test POST /api/purchase - User 2 purchases 1 unknown product - failure
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174002
+
+[
+  {
+    "name": "UnknownProduct",
+    "quantity": 1
+  }
+]
+
+###
+
+### Test GET /api/purchases - Checking User 1 purchases
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174001
+Accept: application/json
+
+###
+
+### Test GET /api/purchases - Checking User 2 purchases
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174002
+Accept: application/json
+
+###
+
+### Test POST /api/purchase - Missing user ID
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 15
+  }
+]
+
+### Test POST /api/purchase - Invalid user ID
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: invalid-uuid
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 15
+  }
+]
+
+### Test POST /api/purchase - Product not found or insufficient quantity
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "nonexistentProduct",
+    "quantity": 1000
+  }
+]
+
+### Test POST /api/purchase - Valid user ID but no products
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[]
+
+### Test POST /api/purchase - Valid user ID but invalid product format
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "invalidField": "value"
+  }
+]
+
+### Test POST /api/purchase - Valid user ID and products
+POST http://localhost:8081/api/purchase
+Content-Type: application/json
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+[
+  {
+    "name": "testProduct",
+    "quantity": 1
+  }
+]
+
+### Test GET /api/purchases - Missing user ID
+GET http://localhost:8081/api/purchases
+
+### Test GET /api/purchases - Invalid user ID
+GET http://localhost:8081/api/purchases
+X-user-id: invalid-uuid
+
+### Test GET /api/purchases - Nonexistent user ID
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174001
+
+### Test GET /api/purchases - Valid user ID
+GET http://localhost:8081/api/purchases
+X-user-id: 123e4567-e89b-12d3-a456-426614174000
+
+
+
